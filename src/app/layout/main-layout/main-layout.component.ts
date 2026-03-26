@@ -82,6 +82,12 @@ import { WebSocketService } from '../../core/services/websocket.service';
                   <span>Profile</span>
                 </a>
               </li>
+              <li>
+                <a routerLink="/company-create" routerLinkActive="active" class="nav-item">
+                  <span class="material-symbols-outlined">business_center</span>
+                  <span>Create Company</span>
+                </a>
+              </li>
               <li *ngIf="isRecruiter()">
                 <a routerLink="/company-dashboard" routerLinkActive="active" class="nav-item recruiter-nav">
                   <span class="material-symbols-outlined">dashboard</span>

@@ -56,6 +56,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/company-dashboard/company-dashboard.component').then(m => m.CompanyDashboardComponent)
       },
       {
+        path: 'company-create',
+        loadComponent: () => import('./features/company-create/company-create.component').then(m => m.CompanyCreateComponent)
+      },
+      {
         path: 'admin-dashboard',
         canActivate: [adminGuard],
         loadComponent: () => import('./features/admin/admin-dashboard.component').then(m => m.AdminDashboardComponent)
