@@ -88,6 +88,12 @@ import { WebSocketService } from '../../core/services/websocket.service';
                   <span>Dashboard</span>
                 </a>
               </li>
+              <li *ngIf="isAdmin()">
+                <a routerLink="/admin-dashboard" routerLinkActive="active" class="nav-item recruiter-nav">
+                  <span class="material-symbols-outlined">admin_panel_settings</span>
+                  <span>Admin Dashboard</span>
+                </a>
+              </li>
             </ul>
           </div>
         </aside>
@@ -284,5 +290,10 @@ export class MainLayoutComponent implements OnInit {
   isRecruiter(): boolean {
     const user = this.authService.currentUser();
     return user?.role === 'ROLE_RECRUITER' || user?.role === 'ROLE_ADMIN';
+  }
+
+  isAdmin(): boolean {
+    const user = this.authService.currentUser();
+    return user?.role === 'ROLE_ADMIN' || user?.role === 'ADMIN';
   }
 }

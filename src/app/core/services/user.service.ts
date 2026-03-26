@@ -3,15 +3,6 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User } from '../models/auth.model';
 
-export interface UserSearchResult {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  headline?: string;
-  profilePhoto?: string;
-}
-
 @Injectable({ providedIn: 'root' })
 export class UserService {
   private http = inject(HttpClient);
@@ -20,9 +11,9 @@ export class UserService {
     return this.http.get<User>(`/api/users/${id}`);
   }
 
-  searchUsers(query: string): Observable<UserSearchResult[]> {
+  searchUsers(query: string): Observable<User[]> {
     const params = new HttpParams().set('query', query);
-    return this.http.get<UserSearchResult[]>('/api/users/search', { params });
+    return this.http.get<User[]>('/api/users/search', { params });
   }
 
   // Admin only
