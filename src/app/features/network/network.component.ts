@@ -6,7 +6,10 @@ import { Router } from '@angular/router';
 import { UserBlockService } from '../../core/services/user-block.service';
 import { ConnectionService, ConnectionRequest } from '../../core/services/connection.service';
 import { User } from '../../core/models/auth.model';
+import { CandidateProfile } from '../../core/models/candidate-profile.model';
+import { CandidateProfileService } from '../../core/services/candidate-profile.service';
 import { NotifyService } from '../../core/services/notify.service';
+import { catchError, forkJoin, map, Observable, of } from 'rxjs';
 
 @Component({
   selector: 'app-network',
@@ -65,11 +68,11 @@ import { NotifyService } from '../../core/services/notify.service';
 
               <div class="w-full space-y-2 mt-auto">
                 <button class="w-full py-2.5 bg-primary-600 text-white rounded-xl font-bold text-sm hover:bg-primary-700 active:scale-95 transition-all shadow-md shadow-primary-500/20"
-                        (click)="connect(user)">
+                        (click)="connect(user, $event)">
                   Se connecter
                 </button>
                 <button class="w-full py-2.5 bg-slate-50 text-slate-600 rounded-xl font-bold text-sm hover:bg-red-50 hover:text-red-600 transition-all flex items-center justify-center gap-2"
-                        (click)="blockUser(user)">
+                        (click)="blockUser(user, $event)">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
                   Bloquer
                 </button>
@@ -97,6 +100,7 @@ export class NetworkComponent implements OnInit {
   private http = inject(HttpClient);
   private blockService = inject(UserBlockService);
   private connectionService = inject(ConnectionService);
+  private profileService = inject(CandidateProfileService);
   private notifyService = inject(NotifyService);
   private router = inject(Router);
   
@@ -108,13 +112,43 @@ export class NetworkComponent implements OnInit {
     this.fetchSuggestedUsers();
   }
 
+  private enrichUsersWithProfiles(users: User[]): Observable<User[]> {
+    if (!users?.length) return of(users);
+
+    return forkJoin(
+      users.map((u) =>
+        this.profileService.getProfileByUserId(u.id).pipe(
+          catchError(() => of(null as CandidateProfile | null))
+        )
+      )
+    ).pipe(
+      map((profiles) =>
+        users.map((u, i) => ({
+          ...u,
+          // Ensure profile contains URLs (photoUrl/headline/cvUrl/etc.)
+          profile: profiles[i] ?? u.profile ?? undefined
+        }))
+      )
+    );
+  }
+
   fetchSuggestedUsers() {
     this.loading.set(true);
     // Endpoint: GET /api/users/network
-    this.http.get<User[]>('/api/users/network').subscribe({
+    this.http.get<any>('/api/users/network').subscribe({
       next: (resp) => {
-        this.users.set(resp);
-        this.loading.set(false);
+        const rawUsers: User[] = resp?.content || resp || [];
+        this.enrichUsersWithProfiles(rawUsers).subscribe(
+          (enriched) => {
+            this.users.set(enriched);
+            this.loading.set(false);
+          },
+          () => {
+            // Fallback: render basic network users even if enrichment fails
+            this.users.set(rawUsers);
+            this.loading.set(false);
+          }
+        );
       },
       error: () => this.loading.set(false)
     });
@@ -129,15 +163,24 @@ export class NetworkComponent implements OnInit {
     // Endpoint: GET /api/users/search?query=...
     this.http.get<any>(`/api/users/search?query=${this.searchQuery}`).subscribe({
       next: (resp) => {
-        // Handle both direct array and Page object
-        this.users.set(resp.content || resp);
-        this.loading.set(false);
+        const rawUsers: User[] = resp?.content || resp || [];
+        this.enrichUsersWithProfiles(rawUsers).subscribe(
+          (enriched) => {
+            this.users.set(enriched);
+            this.loading.set(false);
+          },
+          () => {
+            this.users.set(rawUsers);
+            this.loading.set(false);
+          }
+        );
       },
       error: () => this.loading.set(false)
     });
   }
 
-  connect(user: User) {
+  connect(user: User, event?: Event) {
+    event?.stopPropagation();
     const request: ConnectionRequest = { receiverId: user.id };
     this.connectionService.sendConnectionRequest(request).subscribe({
       next: () => {
@@ -161,7 +204,8 @@ export class NetworkComponent implements OnInit {
     this.router.navigate(['/profile', user.id]);
   }
 
-  blockUser(user: User) {
+  blockUser(user: User, event?: Event) {
+    event?.stopPropagation();
     this.notifyService.confirm('Bloquer cet utilisateur?', 'Il ne pourra plus voir votre profil.', () => {
       this.blockService.blockUser(user.id).subscribe({
         next: () => {
