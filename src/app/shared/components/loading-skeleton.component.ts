@@ -1,0 +1,26 @@
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-loading-skeleton',
+  standalone: true,
+  template: `
+    <div class="skeleton-container p-6 space-y-6">
+      <div class="skeleton-banner h-52 w-full bg-slate-200 rounded-xl animate-pulse"></div>
+      <div class="flex gap-6 items-start">
+        <div class="skeleton-avatar w-40 h-40 bg-slate-200 rounded-full animate-pulse -mt-20 border-4 border-white"></div>
+        <div class="flex-1 pt-4 space-y-3">
+          <div class="h-8 bg-slate-200 rounded w-1/3 animate-pulse"></div>
+          <div class="h-4 bg-slate-200 rounded w-1/2 animate-pulse"></div>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="md:col-span-2 space-y-6">
+          <div class="h-40 bg-slate-200 rounded-xl animate-pulse"></div>
+          <div class="h-60 bg-slate-200 rounded-xl animate-pulse"></div>
+        </div>
+        <div class="h-40 bg-slate-200 rounded-xl animate-pulse"></div>
+      </div>
+    </div>
+  `
+})
+export class LoadingSkeletonComponent {}
