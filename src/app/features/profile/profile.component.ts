@@ -545,6 +545,8 @@ export class ProfileComponent implements OnInit, AfterViewInit {
       }
     });
   }
+
+  private loadOtherProfile(userId: string) {
     this.loading = true;
     forkJoin({
       user: this.userService.getUserById(userId),
