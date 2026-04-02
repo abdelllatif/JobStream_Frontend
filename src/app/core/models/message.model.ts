@@ -4,20 +4,19 @@ export interface Message {
   id: string;
   conversationId: string;
   senderId: string;
-  senderName?: string;
-  recipientId: string;
-  recipientName?: string;
+  senderEmail?: string;
+  senderPhotoUrl?: string;
   content: string;
-  read: boolean;
+  jobId?: string;
+  jobTitle?: string;
+  isRead: boolean;
   createdAt: string;
 }
 
 export interface Conversation {
   id: string;
-  user1: User;
-  user2: User;
+  participants: User[];
   lastMessage?: Message;
   unreadCount?: number;
   createdAt: string;
-  updatedAt: string;
 }

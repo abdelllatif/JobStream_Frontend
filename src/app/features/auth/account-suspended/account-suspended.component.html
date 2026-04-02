@@ -1,0 +1,31 @@
+<div class="auth-page">
+  <div class="card auth-card suspended-card">
+    <div class="auth-header">
+      <div class="logo">Job<span>Stream</span></div>
+      <h1>Compte suspendu</h1>
+      <p>Connexion temporairement indisponible</p>
+    </div>
+
+    <div class="suspension-banner" role="alert">
+      <span class="material-symbols-outlined">error</span>
+      <p>{{ suspensionMessage }}</p>
+    </div>
+
+    <p class="suspension-email" *ngIf="email">
+      Email associe: <strong>{{ email }}</strong>
+    </p>
+
+    <div class="suspension-actions">
+      <button class="btn btn-primary btn-full" type="button" (click)="goToLogin()">
+        Retour a la connexion
+      </button>
+      <a class="btn btn-outline btn-full" routerLink="/home">
+        Retour a l'accueil
+      </a>
+    </div>
+
+    <p class="suspension-note">
+      Si vous pensez qu'il s'agit d'une erreur, contactez le support.
+    </p>
+  </div>
+</div>

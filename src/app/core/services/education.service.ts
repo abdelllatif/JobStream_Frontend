@@ -19,11 +19,11 @@ export class EducationService {
     return this.http.post<Education>('/api/educations', edu);
   }
 
-  updateEducation(id: number, edu: any): Observable<Education> {
+  updateEducation(id: string, edu: any): Observable<Education> {
     return this.http.put<Education>(`/api/educations/${id}`, edu);
   }
 
-  deleteEducation(id: number): Observable<void> {
+  deleteEducation(id: string): Observable<void> {
     return this.http.delete<void>(`/api/educations/${id}`);
   }
 }

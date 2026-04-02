@@ -1,0 +1,126 @@
+<div class="um-card">
+  
+  <div class="search-row">
+    <div class="search-field">
+      <svg class="search-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+      </svg>
+      <input type="text" [(ngModel)]="searchQuery" (input)="applyFilter()"
+             placeholder="Filtrer par nom ou email..."
+             class="search-input">
+    </div>
+    <div class="stats" *ngIf="!loading()">
+      <span class="stat-badge">{{ filteredUsers().length }} utilisateur{{ filteredUsers().length !== 1 ? 's' : '' }}</span>
+    </div>
+  </div>
+
+  
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <span>Chargement des utilisateurs...</span>
+    </div>
+  }
+
+  
+  @if (!loading()) {
+    @if (filteredUsers().length === 0) {
+      <div class="empty-state">
+        <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+        </svg>
+        <p>Aucun utilisateur trouvé.</p>
+      </div>
+    } @else {
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Utilisateur</th>
+              <th>Email</th>
+              <th>Rôle</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (u of filteredUsers(); track u.id) {
+              <tr [class.disabled-row]="u.enabled === false">
+                <td>
+                  <div class="user-cell">
+                    <div class="user-avatar-sm">
+                      {{ (u.firstName || u.email || '?').charAt(0).toUpperCase() }}
+                    </div>
+                    <div>
+                      <strong>{{ u.firstName || '' }} {{ u.lastName || '' }}</strong>
+                      <small class="user-id">{{ u.id | slice:0:8 }}...</small>
+                    </div>
+                  </div>
+                </td>
+                <td>{{ u.email }}</td>
+                <td>
+                  <span class="role-badge" [class]="getRoleBadgeClass(u.role)">
+                    {{ formatRole(u.role) }}
+                  </span>
+                </td>
+                <td>
+                  @if (u.enabled !== false) {
+                    <span class="status-badge active">Actif</span>
+                  } @else {
+                    <span class="status-badge disabled">Désactivé</span>
+                  }
+                </td>
+                <td>
+                  <div class="action-buttons">
+                    @if (!isAdmin(u.role)) {
+                      <button type="button" class="btn-action promote"
+                              (click)="promoteToAdmin(u)"
+                              title="Promouvoir en Admin">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+                        </svg>
+                        Admin
+                      </button>
+                    }
+                    @if (u.enabled !== false) {
+                      <button type="button" class="btn-action disable"
+                              (click)="disableUser(u)"
+                              title="Désactiver le compte">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+                        </svg>
+                        Désactiver
+                      </button>
+                    } @else {
+                      <button type="button" class="btn-action activate"
+                              (click)="activateUser(u)"
+                              title="Activer le compte">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        Activer
+                      </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      
+      @if (totalPages() > 1) {
+        <div class="pagination">
+          <button class="page-btn" [disabled]="currentPage() === 0" (click)="goToPage(currentPage() - 1)">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+          </button>
+          <span class="page-info">Page {{ currentPage() + 1 }} / {{ totalPages() }}</span>
+          <button class="page-btn" [disabled]="currentPage() >= totalPages() - 1" (click)="goToPage(currentPage() + 1)">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      }
+    }
+  }
+</div>

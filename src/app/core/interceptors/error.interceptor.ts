@@ -9,13 +9,11 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error) => {
-      // Handle 401 Unauthorized
       if (error.status === 401 && !req.url.includes('/api/auth/refresh') && !req.url.includes('/api/auth/login')) {
         const refreshService = injector.get(RefreshService);
         const authService = injector.get(AuthService);
         return refreshService.refreshToken().pipe(
           switchMap(() => {
-            // Retry the original request (authInterceptor will provide the new token)
             return next(req);
           }),
           catchError((refreshError) => {

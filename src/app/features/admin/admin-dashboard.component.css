@@ -1,0 +1,9 @@
+.admin-page { max-width: 1100px; margin: 0 auto; padding: 0 8px; }
+.header { margin-bottom: 24px; }
+.header h1 { margin: 0 0 6px; font-size: 24px; font-weight: 700; color: #0f172a; }
+.subtitle { margin: 0; font-size: 14px; color: #64748b; }
+
+@media (max-width: 640px) {
+  .header h1 { font-size: 20px; }
+  .header { margin-bottom: 16px; }
+}

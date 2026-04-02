@@ -1,0 +1,105 @@
+<div class="card p-6 rounded-xl bg-white shadow-sm border border-gray-200">
+  <h2 class="text-xl font-black text-slate-900 mb-2">Profile Management</h2>
+  <p class="text-slate-600 text-sm mb-lg">
+    Enter a userId and preview their profile. Click "Open full profile" to see the full design.
+  </p>
+
+  <form class="search-row flex gap-3 mb-md" (ngSubmit)="loadProfile()">
+    <input
+      type="text"
+      name="userId"
+      [(ngModel)]="userId"
+      placeholder="User ID (UUID)..."
+      class="flex-1 border border-slate-200 px-4 py-2.5 rounded-xl outline-none focus:ring-2 focus:ring-primary-500 text-sm font-medium"
+    />
+    <button
+      type="submit"
+      class="px-5 py-2.5 bg-primary-600 text-white font-bold rounded-xl hover:bg-primary-700 active:scale-95 transition-all"
+    >
+      Load
+    </button>
+  </form>
+
+  <div *ngIf="loading()" class="text-slate-500 text-sm">Loading...</div>
+
+  <div *ngIf="!loading() && user()">
+    <div class="profile-preview">
+      <div class="banner">
+        <div class="pattern-overlay"></div>
+      </div>
+
+      <div class="header">
+        <div class="avatar-wrap">
+          <img
+            [src]="profile()?.photoUrl || user()?.photoUrl || 'assets/default-avatar.png'"
+            alt="Avatar"
+            class="avatar"
+          />
+        </div>
+        <div class="meta">
+          <div class="name text-2xl font-black text-slate-900">
+            {{ (user()?.firstName || user()?.email || '') + ' ' + (user()?.lastName || '') }}
+          </div>
+          <div class="headline text-slate-600 font-bold mt-1">
+            {{ profile()?.headline || 'Prêt pour de nouvelles opportunités' }}
+          </div>
+          <div class="sub text-slate-500 text-sm mt-2">
+            {{ user()?.email }}
+          </div>
+        </div>
+      </div>
+
+      <div class="grid gap-4 mt-6 grid-cols-1 md:grid-cols-3">
+        <div class="box md:col-span-2">
+          <div class="box-title">Bio</div>
+          <div class="box-body whitespace-pre-wrap text-sm text-slate-700">
+            {{ profile()?.bio || 'â��⬝' }}
+          </div>
+          <div class="box-title mt-5">Location</div>
+          <div class="box-body text-sm text-slate-700">
+            {{ profile()?.location || 'Non spécifiée' }}
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="box-title">Links</div>
+          <div class="box-body flex flex-col gap-2">
+            <a
+              *ngIf="profile()?.linkedinUrl"
+              [href]="profile()?.linkedinUrl"
+              target="_blank"
+              rel="noreferrer"
+              class="link"
+            >
+              LinkedIn
+            </a>
+            <a
+              *ngIf="profile()?.githubUrl"
+              [href]="profile()?.githubUrl"
+              target="_blank"
+              rel="noreferrer"
+              class="link"
+            >
+              GitHub
+            </a>
+            <a
+              [href]="profile()?.portfolioUrl || '#'"
+              [class.opacity-50]="!profile()?.portfolioUrl"
+              target="_blank"
+              rel="noreferrer"
+              class="link"
+            >
+              Portfolio
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions mt-6 flex gap-3 flex-wrap">
+        <button type="button" class="open-btn" (click)="openFullProfile()">
+          Open full profile
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

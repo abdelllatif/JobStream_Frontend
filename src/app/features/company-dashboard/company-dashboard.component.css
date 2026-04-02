@@ -1,0 +1,175 @@
+.dashboard-page {
+      padding: var(--spacing-lg);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: var(--spacing-md);
+      align-items: center;
+    }
+
+    .companies-section h2 {
+      margin: 0 0 var(--spacing-lg) 0;
+      font-size: 20px;
+      color: hsl(var(--text-main));
+    }
+
+    .companies-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: var(--spacing-lg);
+    }
+
+    .company-card {
+      background: hsl(var(--bg-card));
+      border: 1px solid hsl(var(--border));
+      border-radius: var(--radius-md);
+      padding: var(--spacing-lg);
+    }
+
+    .company-info h3 {
+      margin: 0 0 var(--spacing-sm) 0;
+      font-size: 18px;
+      color: hsl(var(--text-main));
+    }
+
+    .company-info p {
+      margin: 0 0 var(--spacing-md) 0;
+      color: hsl(var(--text-muted));
+      font-size: 14px;
+    }
+
+    .company-meta {
+      display: flex;
+      gap: var(--spacing-sm);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .company-meta span {
+      font-size: 12px;
+      color: hsl(var(--text-muted));
+      background: hsl(var(--bg-main));
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+    }
+
+    .company-actions {
+      display: flex;
+      gap: var(--spacing-sm);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: var(--spacing-xl);
+    }
+
+    .empty-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto var(--spacing-md);
+      color: hsl(var(--text-muted));
+    }
+
+    .empty-state h3 {
+      margin: 0 0 var(--spacing-sm) 0;
+      font-size: 18px;
+      color: hsl(var(--text-main));
+    }
+
+    .empty-state p {
+      margin: 0 0 var(--spacing-lg) 0;
+      color: hsl(var(--text-muted));
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--spacing-lg);
+    }
+
+    .stat-card {
+      display: flex;
+      flex-direction: column;
+      padding: 32px;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: hsl(var(--primary));
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: hsl(var(--text-muted));
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 8px;
+    }
+
+    .jobs-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .jobs-table th {
+      padding: 16px;
+      font-size: 14px;
+      color: hsl(var(--text-muted));
+      border-bottom: 2px solid hsl(var(--border) / 0.5);
+    }
+
+    .jobs-table td {
+      padding: 16px;
+      border-bottom: 1px solid hsl(var(--border) / 0.5);
+      font-size: 14px;
+    }
+
+    .job-title-cell { font-weight: 600; }
+
+    .applicant-badge {
+      background: hsl(var(--primary) / 0.1);
+      color: hsl(var(--primary));
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-pill {
+      background: hsl(var(--text-muted) / 0.1);
+      color: hsl(var(--text-muted));
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-pill.active {
+      background: hsl(var(--success) / 0.1);
+      color: hsl(var(--success));
+    }
+
+    .actions-cell {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn-icon {
+      color: hsl(var(--text-muted));
+      padding: 6px;
+      border-radius: 50%;
+    }
+
+    .btn-icon:hover {
+      background: hsl(var(--secondary));
+      color: hsl(var(--primary));
+    }
+
+    @media (max-width: 768px) {
+      .jobs-table th:nth-child(2),
+      .jobs-table td:nth-child(2) { display: none; }
+    }

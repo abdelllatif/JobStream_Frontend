@@ -1,213 +1,152 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { User } from '../../core/models/auth.model';
-import { UserService } from '../../core/services/user.service';
+import { UserService, PageResponse } from '../../core/services/user.service';
 import { NotifyService } from '../../core/services/notify.service';
 
 @Component({
   selector: 'app-admin-user-management',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  template: `
-    <div class="card p-6 rounded-xl bg-white shadow-sm border border-gray-200">
-      <div class="flex-row justify-between items-start mb-md">
-        <div>
-          <h2 class="text-xl font-black text-slate-900 mb-2">User Management</h2>
-          <p class="text-slate-600 text-sm">
-            Search users by email or headline, then update role or delete the account.
-          </p>
-        </div>
-      </div>
-
-      <form
-        class="search-row flex gap-3 mb-md"
-        (ngSubmit)="search()"
-      >
-        <input
-          type="text"
-          name="query"
-          [(ngModel)]="searchQuery"
-          placeholder="Email or headline..."
-          class="flex-1 border border-slate-200 px-4 py-2.5 rounded-xl outline-none focus:ring-2 focus:ring-primary-500 text-sm font-medium"
-        />
-        <button
-          type="submit"
-          class="px-5 py-2.5 bg-primary-600 text-white font-bold rounded-xl hover:bg-primary-700 active:scale-95 transition-all"
-        >
-          Search
-        </button>
-      </form>
-
-      <div *ngIf="loading()" class="text-slate-500 text-sm">Loading...</div>
-
-      <div *ngIf="!loading()">
-        @if (users().length === 0) {
-          <div class="text-center py-8 text-slate-400 text-sm italic">No users found.</div>
-        } @else {
-          <div class="table-responsive">
-            <table class="w-full border-collapse">
-              <thead>
-                <tr class="border-b border-slate-200 text-left">
-                  <th class="py-3 text-xs font-black uppercase tracking-wider text-slate-500">User</th>
-                  <th class="py-3 text-xs font-black uppercase tracking-wider text-slate-500">Email</th>
-                  <th class="py-3 text-xs font-black uppercase tracking-wider text-slate-500">Role</th>
-                  <th class="py-3 text-xs font-black uppercase tracking-wider text-slate-500">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (u of users(); track u.id) {
-                  <tr class="border-b border-slate-100">
-                    <td class="py-3 text-sm text-slate-800 font-bold">
-                      {{ u.firstName || '' }} {{ u.lastName || '' }}
-                      <div class="text-xs text-slate-400 font-medium">{{ u.id }}</div>
-                    </td>
-                    <td class="py-3 text-sm text-slate-800">{{ u.email }}</td>
-                    <td class="py-3">
-                      <select
-                        class="border border-slate-200 px-3 py-2 rounded-lg text-sm font-bold outline-none focus:ring-2 focus:ring-primary-500"
-                        [(ngModel)]="roleDrafts[u.id]"
-                        (ngModelChange)="roleDrafts[u.id] = $event"
-                      >
-                        @if (roleOptionsFor(u).length) {
-                          @for (r of roleOptionsFor(u); track r) {
-                            <option [ngValue]="r">{{ r }}</option>
-                          }
-                        } @else {
-                          <option [ngValue]="'USER'">USER</option>
-                          <option [ngValue]="'ADMIN'">ADMIN</option>
-                        }
-                      </select>
-                    </td>
-                    <td class="py-3">
-                      <div class="flex items-center gap-2 flex-wrap">
-                        <button
-                          type="button"
-                          class="px-4 py-2 bg-primary-600 text-white font-bold rounded-lg hover:bg-primary-700 active:scale-95 transition-all text-xs"
-                          (click)="updateRole(u)"
-                        >
-                          Update
-                        </button>
-                        <button
-                          type="button"
-                          class="px-4 py-2 bg-slate-50 text-red-600 font-bold rounded-lg hover:bg-red-50 active:scale-95 transition-all text-xs border border-red-100"
-                          (click)="deleteUser(u)"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-          </div>
-        }
-      </div>
-    </div>
-  `,
-  styles: [
-    `
-      .card {
-        background: white;
-      }
-      .table-responsive {
-        overflow-x: auto;
-      }
-      .flex-row {
-        display: flex;
-      }
-      .flex {
-        display: flex;
-      }
-      .items-start {
-        align-items: flex-start;
-      }
-      .items-center {
-        align-items: center;
-      }
-      .justify-between {
-        justify-content: space-between;
-      }
-      .gap-3 {
-        gap: 12px;
-      }
-      .mb-md {
-        margin-bottom: 16px;
-      }
-      .mb-lg {
-        margin-bottom: 24px;
-      }
-    `
-  ]
+  templateUrl: './admin-user-management.component.html',
+  styleUrls: ['./admin-user-management.component.css']
 })
-export class AdminUserManagementComponent {
+export class AdminUserManagementComponent implements OnInit {
   private userService = inject(UserService);
   private notifyService = inject(NotifyService);
 
-  users = signal<User[]>([]);
-  loading = signal<boolean>(false);
+  allUsers = signal<User[]>([]);
+  filteredUsers = signal<User[]>([]);
+  loading = signal(false);
+
+  currentPage = signal(0);
+  totalPages = signal(0);
+  totalElements = signal(0);
+  pageSize = 20;
+
   searchQuery = '';
 
-  // Store role values per userId so the select can edit without mutating the list object directly.
-  roleDrafts: Record<string, string> = {};
+  ngOnInit() {
+    this.loadUsers(0);
+  }
 
-  search() {
+  loadUsers(page: number) {
     this.loading.set(true);
-    this.userService.searchUsers(this.searchQuery).subscribe({
+    this.userService.getAllUsers(page, this.pageSize).subscribe({
       next: (resp) => {
-        this.users.set(resp || []);
-        // Initialize drafts from current role so select shows correct value.
-        const drafts: Record<string, string> = {};
-        for (const u of resp || []) {
-          drafts[u.id] = u.role;
-        }
-        this.roleDrafts = drafts;
+        const users = resp.content || [];
+        this.allUsers.set(users);
+        this.currentPage.set(resp.number ?? page);
+        this.totalPages.set(resp.totalPages ?? 1);
+        this.totalElements.set(resp.totalElements ?? users.length);
+        this.applyFilter();
         this.loading.set(false);
       },
       error: () => {
-        this.users.set([]);
+        this.allUsers.set([]);
+        this.filteredUsers.set([]);
         this.loading.set(false);
+        this.notifyService.showToast('Erreur lors du chargement des utilisateurs', 'error');
       }
     });
   }
 
-  roleOptionsFor(u: User): string[] {
-    const role = u.role;
-    if (role?.startsWith('ROLE_')) {
-      return ['ROLE_USER', 'ROLE_ADMIN'];
+  goToPage(page: number) {
+    if (page >= 0 && page < this.totalPages()) {
+      this.loadUsers(page);
     }
-    return ['USER', 'ADMIN'];
   }
 
-  updateRole(u: User) {
-    const role = this.roleDrafts[u.id] ?? u.role;
-    this.userService.updateUserRole(u.id, role).subscribe({
-      next: (updated) => {
-        this.users.set(
-          this.users().map(x => (x.id === u.id ? { ...x, role: updated.role ?? role } : x))
-        );
-        this.notifyService.showSuccess('Role updated', 'User role updated successfully.');
-      },
-      error: () => this.notifyService.showError('Erreur', 'Impossible de mettre à jour le rôle.')
-    });
+  applyFilter() {
+    const q = this.searchQuery.toLowerCase().trim();
+    if (!q) {
+      this.filteredUsers.set(this.allUsers());
+      return;
+    }
+    this.filteredUsers.set(
+      this.allUsers().filter(u => {
+        const name = `${u.firstName || ''} ${u.lastName || ''}`.toLowerCase();
+        return name.includes(q) || (u.email || '').toLowerCase().includes(q);
+      })
+    );
   }
 
-  deleteUser(u: User) {
+  promoteToAdmin(u: User) {
+    const roleName = u.role?.startsWith('ROLE_') ? 'ROLE_ADMIN' : 'ADMIN';
     this.notifyService.confirm(
-      'Delete this user?',
-      'This action cannot be undone.',
+      `Promouvoir ${u.firstName || u.email} en Admin ?`,
+      'Cette action donnera les droits administrateur à cet utilisateur.',
       () => {
-        this.userService.deleteUser(u.id).subscribe({
-          next: () => {
-            this.users.set(this.users().filter(x => x.id !== u.id));
-            delete this.roleDrafts[u.id];
-            this.notifyService.showToast('User deleted', 'success');
+        this.userService.updateUserRole(u.id, roleName).subscribe({
+          next: (updated) => {
+            this.allUsers.update(list => list.filter(x => x.id !== u.id));
+            this.applyFilter();
+            this.notifyService.showToast('Utilisateur promu en Admin', 'success');
           },
-          error: () => this.notifyService.showError('Erreur', 'Impossible de supprimer l\'utilisateur.')
+          error: () => {
+            this.notifyService.showError('Erreur', 'Impossible de modifier le rôle.');
+          }
         });
       }
     );
   }
-}
 
+  disableUser(u: User) {
+    this.notifyService.confirm(
+      `Désactiver le compte de ${u.firstName || u.email} ?`,
+      'Le compte sera désactivé (l\'utilisateur ne pourra plus se connecter).',
+      () => {
+        this.userService.disableUser(u.id).subscribe({
+          next: () => {
+            this.allUsers.update(list =>
+              list.map(x => x.id === u.id ? { ...x, enabled: false } : x)
+            );
+            this.applyFilter();
+            this.notifyService.showToast('Compte désactivé', 'success');
+          },
+          error: () => {
+            this.notifyService.showError('Erreur', 'Impossible de désactiver le compte.');
+          }
+        });
+      }
+    );
+  }
+
+  activateUser(u: User) {
+    this.userService.activateUser(u.id).subscribe({
+      next: () => {
+        this.allUsers.update(list =>
+          list.map(x => x.id === u.id ? { ...x, enabled: true } : x)
+        );
+        this.applyFilter();
+        this.notifyService.showToast('Compte activé', 'success');
+      },
+      error: () => {
+        this.notifyService.showError('Erreur', 'Impossible d\'activer le compte.');
+      }
+    });
+  }
+
+  formatRole(role: string): string {
+    const r = (role || '').replace('ROLE_', '');
+    switch (r) {
+      case 'ADMIN': return 'Admin';
+      case 'RECRUITER': return 'Recruteur';
+      default: return 'Utilisateur';
+    }
+  }
+
+  getRoleBadgeClass(role: string): string {
+    const r = (role || '').replace('ROLE_', '');
+    switch (r) {
+      case 'ADMIN': return 'role-badge role-admin';
+      case 'RECRUITER': return 'role-badge role-recruiter';
+      default: return 'role-badge role-user';
+    }
+  }
+
+  isAdmin(role: string): boolean {
+    return role === 'ROLE_ADMIN' || role === 'ADMIN';
+  }
+}

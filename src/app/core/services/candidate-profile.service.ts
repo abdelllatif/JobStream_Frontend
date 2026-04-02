@@ -16,7 +16,6 @@ export class CandidateProfileService {
   }
 
   updateProfile(profile: Partial<CandidateProfile>): Observable<CandidateProfile> {
-    // Backend uses PUT /api/profiles for current user update
     return this.http.put<CandidateProfile>('/api/profiles', profile);
   }
 

@@ -19,7 +19,7 @@ export class SkillService {
     return this.http.post<Skill>('/api/skills', skill);
   }
 
-  deleteSkill(id: number): Observable<void> {
+  deleteSkill(id: string): Observable<void> {
     return this.http.delete<void>(`/api/skills/${id}`);
   }
 }

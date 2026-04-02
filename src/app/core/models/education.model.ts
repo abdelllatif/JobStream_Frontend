@@ -1,10 +1,12 @@
 export interface Education {
-  id: number;
+  id: string;
+  userId: string;
   school: string;
-  degree: string;
+  degree?: string;
   fieldOfStudy?: string;
   startDate: string;
   endDate?: string;
   description?: string;
-  candidateProfileId: number;
+  createdAt?: string;
+  updatedAt?: string;
 }

@@ -1,0 +1,108 @@
+<div class="dashboard-page">
+      <div class="header-section flex-row justify-between items-center mb-lg">
+        <h1>Company Dashboard</h1>
+        <div class="header-actions">
+          @for (company of companies(); track company.id) {
+            <a [routerLink]="['/recruitment', company.id]" class="btn btn-primary">
+              Recruitment Space
+            </a>
+          }
+          <a routerLink="/company-create" class="btn btn-outline">
+            + Create New Company
+          </a>
+        </div>
+      </div>
+
+      @if (companies().length > 0) {
+        <div class="companies-section mb-lg">
+          <h2>Your Companies</h2>
+          <div class="companies-grid">
+            @for (company of companies(); track company.id) {
+              <div class="company-card">
+                <div class="company-info">
+                  <h3>{{ company.name }}</h3>
+                  <p>{{ company.description || 'No description' }}</p>
+                  @if (company.domain || company.location) {
+                    <div class="company-meta">
+                      @if (company.domain) {
+                        <span>{{ company.domain }}</span>
+                      }
+                      @if (company.location) {
+                        <span>{{ company.location }}</span>
+                      }
+                    </div>
+                  }
+                </div>
+                <div class="company-actions">
+                  <a [routerLink]="['/company', company.id]" class="btn btn-sm btn-outline">
+                    View
+                  </a>
+                  <a [routerLink]="['/recruitment', company.id]" class="btn btn-sm btn-primary">
+                    Recruitment
+                  </a>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="stats-grid mb-lg">
+          <div class="stat-card card text-center">
+            <span class="stat-value">{{ stats().activeJobs }}</span>
+            <span class="stat-label">Active Jobs</span>
+          </div>
+          <div class="stat-card card text-center">
+            <span class="stat-value">{{ stats().totalApplicants }}</span>
+            <span class="stat-label">Total Applicants</span>
+          </div>
+          <div class="stat-card card text-center">
+            <span class="stat-value">{{ stats().pendingApplications }}</span>
+            <span class="stat-label">Pending Applications</span>
+          </div>
+        </div>
+
+        <div class="jobs-management card">
+          <h2 class="mb-md">Your Posted Jobs</h2>
+          <div class="table-responsive">
+            <table class="jobs-table">
+              <thead>
+                <tr>
+                  <th>Job Title</th>
+                  <th>Posted On</th>
+                  <th>Applicants</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (job of jobs(); track job.id) {
+                  <tr>
+                    <td class="job-title-cell">{{ job.title }}</td>
+                    <td>{{ job.createdAt | date:'shortDate' }}</td>
+                    <td>
+                      <span class="applicant-badge">{{ job.applicationCount || 0 }} Applied</span>
+                    </td>
+                    <td>
+                      <span class="status-pill" [class.active]="job.status === 'OPEN'">
+                        {{ job.status }}
+                      </span>
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="4" class="text-center p-xl">No jobs posted yet.</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      } @else {
+        <div class="empty-state text-center p-xl">
+          <h3>No Companies Yet</h3>
+          <p>Create your first company to start recruiting talent</p>
+          <a routerLink="/company-create" class="btn btn-primary">
+            + Create Company
+          </a>
+        </div>
+      }
+    </div>

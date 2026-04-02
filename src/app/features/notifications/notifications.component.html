@@ -1,0 +1,69 @@
+<div class="notifications-page card">
+  <div class="header flex-row items-center justify-between pb-md border-b">
+    <h2>Notifications</h2>
+    <div class="flex items-center gap-2">
+      @if (unreadCount() > 0) {
+        <span class="unread-count-badge">{{ unreadCount() }}</span>
+      }
+      <button class="btn btn-outline" (click)="markAllAsRead()"
+              [disabled]="unreadCount() === 0">
+        Mark all as read
+      </button>
+    </div>
+  </div>
+
+  <div class="notifications-list">
+    @if (loading()) {
+      @for (n of [1,2,3]; track $index) {
+         <div class="notif-item skeleton-notif">
+            <div class="skeleton circle"></div>
+            <div class="skeleton-text">
+               <div class="skeleton line" style="width: 80%"></div>
+               <div class="skeleton line" style="width: 40%"></div>
+            </div>
+         </div>
+      }
+    } @else {
+      @for (notif of notifications(); track notif.id) {
+        <div class="notif-item flex-row gap-md"
+             [class.unread]="!notif.isRead"
+             (click)="onNotificationClick(notif)">
+          <div class="notif-icon-wrapper">
+            @switch (getIconComponent(notif.type)) {
+              @case ('connection') {
+                <span class="icon-type connection">ðŸ��¤</span>
+              }
+              @case ('connection_accepted') {
+                <span class="icon-type connection_accepted">ðŸ¤</span>
+              }
+              @case ('application') {
+                <span class="icon-type application">ðŸ�"¼</span>
+              }
+              @case ('job_posted') {
+                <span class="icon-type job_posted">ðŸ�S⬹</span>
+              }
+              @case ('profile_view') {
+                <span class="icon-type profile_view">ðŸ��️</span>
+              }
+              @default {
+                <span class="icon-type default">ðŸ⬝⬝</span>
+              }
+            }
+          </div>
+          <div class="notif-content flex-column">
+            <p [innerHTML]="getNotificationText(notif)"></p>
+            <span class="notif-time">{{notif.createdAt | date:'medium'}}</span>
+          </div>
+          @if (!notif.isRead) {
+            <div class="unread-dot"></div>
+          }
+        </div>
+      } @empty {
+        <div class="empty-state text-center p-xl">
+          <span class="large">ðŸ⬝⬝</span>
+          <p>You're all caught up!</p>
+        </div>
+      }
+    }
+  </div>
+</div>

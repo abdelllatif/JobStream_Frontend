@@ -1,0 +1,20 @@
+services:
+  frontend:
+    container_name: ${FRONTEND_CONTAINER_NAME:-jobstream_frontend}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        ANGULAR_CONFIGURATION: ${ANGULAR_CONFIGURATION:-production}
+    env_file:
+      - .env
+    ports:
+      - "${FRONTEND_PORT:-4200}:80"
+    restart: unless-stopped
+    networks:
+      - frontend_shared
+
+networks:
+  frontend_shared:
+    external: true
+    name: ${FRONTEND_NETWORK_NAME:-jobstream_frontend_net}

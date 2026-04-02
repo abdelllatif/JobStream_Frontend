@@ -2,7 +2,7 @@ import { Injectable, signal, inject, effect } from '@angular/core';
 import { Router } from '@angular/router';
 import { TokenService } from './token.service';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable, tap, switchMap } from 'rxjs';
 
 import { User, AuthResponse } from '../models/auth.model';
 
@@ -17,7 +17,6 @@ export class AuthService {
   currentUser = signal<User | null>(null);
   isAuthenticated = signal<boolean>(false);
 
-  // Return the user signal directly for peak performance in Angular 18+
   get user() {
     return this.currentUser;
   }
@@ -55,12 +54,13 @@ export class AuthService {
     );
   }
 
-  login(credentials: any): Observable<AuthResponse> {
+  login(credentials: any): Observable<User> {
     return this.http.post<AuthResponse>('/api/auth/login', credentials).pipe(
       tap((response) => {
         this.tokenService.saveTokens(response.accessToken, response.refreshToken);
-        this.fetchCurrentUser().subscribe();
-      })
+        this.isAuthenticated.set(true);
+      }),
+      switchMap(() => this.fetchCurrentUser())
     );
   }
 
@@ -77,8 +77,9 @@ export class AuthService {
 
   handleOAuth2Callback(token: string, refreshToken: string): void {
     this.tokenService.saveTokens(token, refreshToken);
-    this.fetchCurrentUser().subscribe(() => {
-      this.router.navigate(['/job-feed']);
+    this.fetchCurrentUser().subscribe((user) => {
+      const isAdmin = user.role === 'ROLE_ADMIN' || user.role === 'ADMIN';
+      this.router.navigate([isAdmin ? '/admin' : '/job-feed']);
     });
   }
 }

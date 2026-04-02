@@ -1,0 +1,9 @@
+@keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+.animate-slide-in { animation: slideIn 0.25s ease-out; }
+
+@media (max-width: 640px) {
+  :host ::ng-deep .fixed.inset-0 .relative.w-full {
+    max-width: 100% !important;
+    height: 100dvh;
+  }
+}

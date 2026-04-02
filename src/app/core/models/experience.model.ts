@@ -1,9 +1,14 @@
 export interface Experience {
-  id: number;
+  id: string;
+  userId: string;
+  companyId?: string;
+  companyName?: string;
   title: string;
-  company: string;
+  employmentType?: string;
   startDate: string;
   endDate?: string;
+  isCurrent?: boolean;
   description?: string;
-  candidateProfileId: number;
+  createdAt?: string;
+  updatedAt?: string;
 }

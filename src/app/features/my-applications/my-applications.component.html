@@ -1,0 +1,38 @@
+<section class="applications-page">
+  <div class="page-header card">
+    <div>
+      <h1>Mes candidatures</h1>
+      <p>Suivez l'etat de vos candidatures. Seuls les recruteurs peuvent modifier le statut.</p>
+    </div>
+    <a routerLink="/job-feed" class="btn btn-outline">Voir les offres</a>
+  </div>
+
+  @if (loading()) {
+    <div class="card loading-card">Chargement des candidatures...</div>
+  } @else if (applications().length === 0) {
+    <div class="card empty-card">
+      <h3>Aucune candidature pour le moment</h3>
+      <p>Postulez depuis le Job Feed pour voir vos candidatures ici.</p>
+      <a routerLink="/job-feed" class="btn btn-primary">Explorer les offres</a>
+    </div>
+  } @else {
+    <div class="card applications-card">
+      <div class="applications-list">
+        @for (app of applications(); track app.id) {
+          <article class="application-item">
+            <div class="application-main">
+              <h3>{{ getJobTitle(app) }}</h3>
+              <p>{{ getCompanyName(app) }}</p>
+              <small>Postulee le {{ app.appliedAt | date:'dd/MM/yyyy HH:mm' }}</small>
+            </div>
+            <div class="application-meta">
+              <span class="status-badge" [class]="'status-badge ' + app.status.toLowerCase()">
+                {{ getStatusLabel(app.status) }}
+              </span>
+            </div>
+          </article>
+        }
+      </div>
+    </div>
+  }
+</section>

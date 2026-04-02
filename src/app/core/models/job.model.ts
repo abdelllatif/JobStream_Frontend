@@ -4,13 +4,14 @@ export interface Job {
   description: string;
   companyId: string;
   companyName: string;
-  companyLogo?: string;
+  companyLogoUrl?: string;
   location: string;
-  type: 'FULL_TIME' | 'PART_TIME' | 'CONTRACT' | 'INTERNSHIP' | 'REMOTE';
-  status: 'OPEN' | 'CLOSED' | 'DRAFT';
-  requirements: string[];
-  salaryRange?: string;
+  jobType: 'FULL_TIME' | 'PART_TIME' | 'CONTRACT' | 'INTERNSHIP';
+  status: 'OPEN' | 'CLOSED';
+  salaryMin?: number;
+  salaryMax?: number;
+  createdById?: string;
   createdAt: string;
   updatedAt: string;
-  applicantsCount?: number;
+  applicationCount?: number;
 }

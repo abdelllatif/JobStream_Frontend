@@ -1,0 +1,10 @@
+<div class="callback-container card">
+  @if (error()) {
+    <div class="error-icon">!</div>
+    <p>{{ error() }}</p>
+    <button class="btn btn-primary" (click)="goToLogin()">Back to Login</button>
+  } @else {
+    <div class="spinner skeleton"></div>
+    <p>Completing authentication...</p>
+  }
+</div>

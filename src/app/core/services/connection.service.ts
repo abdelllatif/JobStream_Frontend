@@ -22,12 +22,10 @@ export class ConnectionService {
     return this.http.post('/api/connections/request', request);
   }
 
-  // Backend: PUT /api/connections/:id/accept  (id = connection record id)
   acceptConnection(connectionId: string): Observable<any> {
     return this.http.put(`/api/connections/${connectionId}/accept`, {});
   }
 
-  // Backend: PUT /api/connections/:id/reject  (id = connection record id)
   rejectConnection(connectionId: string): Observable<any> {
     return this.http.put(`/api/connections/${connectionId}/reject`, {});
   }
@@ -44,7 +42,10 @@ export class ConnectionService {
     return this.http.get<any[]>('/api/connections/pending');
   }
 
-  // New: check connection status with a specific user
+  getSentPendingRequests(): Observable<any[]> {
+    return this.http.get<any[]>('/api/connections/sent-pending');
+  }
+
   getConnectionStatus(userId: string): Observable<ConnectionStatusResponse> {
     return this.http.get<ConnectionStatusResponse>(`/api/connections/status/${userId}`);
   }

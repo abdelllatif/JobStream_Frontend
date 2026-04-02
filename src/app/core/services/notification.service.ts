@@ -1,52 +1,57 @@
 import { Injectable, signal, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
 
 export interface Notification {
   id: string;
+  userId: string;
   type: string;
-  message: string;
-  read: boolean;
+  entityId?: string;
+  content: string;
+  isRead: boolean;
   createdAt: string;
-  senderId?: string;
-  senderName?: string;
-  senderPhoto?: string;
-  referenceId?: string;
+}
+
+export interface NotificationCountResponse {
+  notificationCount: number;
+  messageCount: number;
 }
 
 @Injectable({ providedIn: 'root' })
 export class NotificationService {
   private http = inject(HttpClient);
 
-  // Reactive unread count signal — update from backend
-  unreadCount = signal<number>(0);
+  unreadNotificationCount = signal<number>(0);
+  unreadMessageCount = signal<number>(0);
 
-  getMyNotifications(): Observable<Notification[]> {
-    return this.http.get<Notification[]>('/api/notifications/my');
+  setBadgeCounts(counts: NotificationCountResponse): void {
+    this.unreadNotificationCount.set(counts.notificationCount);
+    this.unreadMessageCount.set(counts.messageCount);
   }
 
-  getUnreadCount(): Observable<number> {
-    return this.http.get<number>('/api/notifications/unread-count').pipe(
-      tap((count) => this.unreadCount.set(count))
+  loadUnreadCounts(): void {
+    this.http.get<NotificationCountResponse>('/api/notifications/unread-counts').subscribe({
+      next: (counts) => this.setBadgeCounts(counts),
+      error: () => {},
+    });
+  }
+
+  getMyNotifications(page: number = 0, size: number = 20): Observable<Notification[]> {
+    const params = new HttpParams().set('page', page.toString()).set('size', size.toString());
+    return this.http.get<any>('/api/notifications/my', { params }).pipe(
+      map(resp => resp.content || resp || [])
     );
   }
 
-  markAsRead(notificationId: string): Observable<void> {
-    return this.http.put<void>(`/api/notifications/${notificationId}/read`, {});
+  markAsRead(notificationId: string): Observable<any> {
+    return this.http.put(`/api/notifications/${notificationId}/read`, {});
   }
 
-  markAllAsRead(): Observable<void> {
-    return this.http.put<void>('/api/notifications/read-all', {}).pipe(
-      tap(() => this.unreadCount.set(0))
-    );
+  markAllAsRead(): Observable<any> {
+    return this.http.put('/api/notifications/read-all', {});
   }
 
-  // Called when a WebSocket notification arrives — increments local count
-  increment() {
-    this.unreadCount.update(c => c + 1);
-  }
-
-  reset() {
-    this.unreadCount.set(0);
+  markMessageNotificationsAsRead(): Observable<any> {
+    return this.http.put('/api/notifications/read-messages', {});
   }
 }

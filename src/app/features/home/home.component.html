@@ -1,0 +1,168 @@
+<div class="landing-page">
+  
+  <nav class="landing-nav">
+    <div class="navbar-container flex-row items-center justify-between">
+      <div class="logo">Job<span>Stream</span></div>
+      <div class="nav-links flex-row gap-lg">
+        <a href="#hero">Home</a>
+        <a href="#about">About</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <div class="nav-auth flex-row gap-md">
+        <a routerLink="/login" class="btn btn-outline">Login</a>
+        <a routerLink="/register" class="btn btn-primary">Join Now</a>
+      </div>
+    </div>
+  </nav>
+
+  
+  <section class="relative px-4 sm:px-6 lg:px-16 pt-12 sm:pt-20 pb-20 sm:pb-40">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-16 items-center">
+
+        <div class="space-y-6 sm:space-y-8 text-center lg:text-left">
+            
+            <div class="flex items-center justify-center lg:justify-start gap-4 text-sm">
+                <div class="flex -space-x-3">
+                    <img src="https://randomuser.me/api/portraits/women/32.jpg" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-4 border-blue-900/50" alt="">
+                    <img src="https://randomuser.me/api/portraits/men/45.jpg" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-4 border-blue-900/50" alt="">
+                    <img src="https://randomuser.me/api/portraits/women/68.jpg" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-4 border-blue-900/50" alt="">
+                </div>
+                <span class="text-blue-300 text-xs sm:text-sm">Déjà utilisé par plus de 50 000 candidats</span>
+            </div>
+
+            <h1 class="text-3xl sm:text-5xl lg:text-7xl font-black leading-tight">
+                Du CV<br>
+                <span class="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">à l'opportunité.</span><br><br>
+                La plateforme de recrutement<br>
+                <span class="text-blue-300">100% gratuite</span> du Maroc.
+            </h1>
+
+            <p class="text-base sm:text-xl text-gray-300 leading-relaxed max-w-lg mx-auto lg:mx-0">
+                Trouvez les meilleures offres d'emploi, gérez vos candidatures, suivez les statuts en temps réel â��⬝
+                tout ça gratuitement, sans limite et avec une sécurité renforcée.
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 pt-4 sm:pt-6 items-center lg:items-start">
+                <a routerLink="/job-feed" class="px-8 sm:px-10 py-4 sm:py-5 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 font-bold text-lg sm:text-xl text-center shadow-2xl transform hover:scale-105 transition w-full sm:w-auto">
+                    Postuler maintenant
+                </a>
+                <a routerLink="/job-feed" class="px-8 sm:px-10 py-4 sm:py-5 rounded-2xl bg-white/10 backdrop-blur border border-white/20 hover:bg-white/20 font-bold text-lg sm:text-xl flex items-center justify-center gap-3 w-full sm:w-auto">
+                    Voir une démo
+                </a>
+            </div>
+        </div>
+
+        <div class="relative h-full hidden lg:flex items-center justify-center">
+            <div class="relative">
+
+                <div class="bg-gradient-to-br from-blue-900/80 to-cyan-900/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/10 p-8 w-96 transform rotate-3 hover:rotate-6 transition-all duration-500">
+                    <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=800" alt="Job" class="w-full h-64 object-cover rounded-2xl mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-2xl font-bold">Senior Developer</h3>
+                        <span class="px-4 py-2 bg-blue-600/30 rounded-full text-sm">Casablanca</span>
+                    </div>
+                    <p class="text-gray-300 mb-6">Tech Startup â��¢ CDI</p>
+                    <button class="w-full py-4 bg-white text-blue-900 font-bold rounded-2xl hover:bg-gray-200 transition">
+                        POSTULER
+                    </button>
+                </div>
+
+                <div class="absolute -left-20 top-20 bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-6 w-80 -rotate-12 hover:-rotate-6 transition-all duration-500">
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="font-bold text-lg">Candidatures reçues</h4>
+                        <span class="text-cyan-400 text-sm">+8 aujourd'hui</span>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" class="w-12 h-12 rounded-full" alt="">
+                            <div>
+                                <p class="font-medium">Amina El Amrani</p>
+                                <p class="text-sm text-gray-400">Frontend Developer</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <img src="https://randomuser.me/api/portraits/men/22.jpg" class="w-12 h-12 rounded-full" alt="">
+                            <div>
+                                <p class="font-medium">Youssef Benjelloun</p>
+                                <p class="text-sm text-gray-400">Full Stack Dev</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="absolute -right-16 bottom-20 bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-6 w-72 rotate-12 hover:rotate-6 transition-all duration-500">
+                    <p class="text-sm text-gray-400 mb-4">Compétences</p>
+                    <div class="space-y-4">
+                        <div class="bg-gray-200 border-2 border-dashed rounded-xl w-20 h-20 mx-auto"></div>
+                        <div class="grid grid-cols-5 gap-2">
+                            <div class="w-8 h-8 rounded-full bg-blue-500"></div>
+                            <div class="w-8 h-8 rounded-full bg-cyan-500"></div>
+                            <div class="w-8 h-8 rounded-full bg-indigo-500"></div>
+                            <div class="w-8 h-8 rounded-full bg-blue-400"></div>
+                            <div class="w-8 h-8 rounded-full bg-gray-500"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+  
+  <section id="about" class="about-section">
+    <div class="container text-center">
+      <h2 class="section-title">Why JobStream?</h2>
+      <div class="benefits-grid">
+        <div class="benefit-card card">
+          <span class="material-symbols-outlined icon">verified</span>
+          <h3>Verified Opportunities</h3>
+          <p>Every job posting is vetted to ensure a safe and professional environment.</p>
+        </div>
+        <div class="benefit-card card">
+          <span class="material-symbols-outlined icon">hub</span>
+          <h3>Powerful Networking</h3>
+          <p>Connect directly with recruiters and peers in your field.</p>
+        </div>
+        <div class="benefit-card card">
+          <span class="material-symbols-outlined icon">bolt</span>
+          <h3>Real-time Updates</h3>
+          <p>Instant notifications for messages, applications, and network activities.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  
+  <section id="faq" class="faq-section">
+    <div class="container">
+      <h2 class="section-title text-center">Frequently Asked Questions</h2>
+      <div class="faq-list">
+        <details class="faq-item card">
+          <summary>Is JobStream free to use?</summary>
+          <p>Yes, JobStream is free for job seekers. Recruiters have access to premium features for job management.</p>
+        </details>
+        <details class="faq-item card">
+          <summary>How does the Google Login work?</summary>
+          <p>You can instantly sign up or log in using your Google account. We prioritize your security and only access basic profile information.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  
+  <section id="contact" class="contact-section">
+    <div class="container text-center">
+      <h2 class="section-title">Ready to jump in?</h2>
+      <p class="mb-md">Join thousands of professionals already growing their careers.</p>
+      <a routerLink="/register" class="btn btn-primary btn-lg">Create My Account</a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 JobStream. All rights reserved.</p>
+    </div>
+  </footer>
+</div>

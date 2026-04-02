@@ -19,11 +19,11 @@ export class ExperienceService {
     return this.http.post<Experience>('/api/experiences', exp);
   }
 
-  updateExperience(id: number, exp: any): Observable<Experience> {
+  updateExperience(id: string, exp: any): Observable<Experience> {
     return this.http.put<Experience>(`/api/experiences/${id}`, exp);
   }
 
-  deleteExperience(id: number): Observable<void> {
+  deleteExperience(id: string): Observable<void> {
     return this.http.delete<void>(`/api/experiences/${id}`);
   }
 }

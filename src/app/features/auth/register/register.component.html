@@ -1,0 +1,146 @@
+<div class="auth-page">
+  <div class="auth-card card">
+    
+    <div class="auth-header">
+      <div class="logo">Job<span>Stream</span></div>
+      <h1>Join JobStream</h1>
+      <p>The easiest way to find and manage your next professional move.</p>
+    </div>
+
+    
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form">
+      
+      <div class="name-row">
+        <div class="form-group">
+          <label for="firstName">First Name</label>
+          <div class="input-wrapper">
+            <span class="input-icon material-symbols-outlined">person</span>
+            <input
+              type="text"
+              id="firstName"
+              formControlName="firstName"
+              placeholder="John"
+              [class.input-error]="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched"
+            >
+          </div>
+          <div class="field-error" *ngIf="registerForm.get('firstName')?.hasError('required') && registerForm.get('firstName')?.touched">
+            First name is required.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="lastName">Last Name</label>
+          <div class="input-wrapper">
+            <span class="input-icon material-symbols-outlined">person</span>
+            <input
+              type="text"
+              id="lastName"
+              formControlName="lastName"
+              placeholder="Doe"
+              [class.input-error]="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched"
+            >
+          </div>
+          <div class="field-error" *ngIf="registerForm.get('lastName')?.hasError('required') && registerForm.get('lastName')?.touched">
+            Last name is required.
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <div class="input-wrapper">
+          <span class="input-icon material-symbols-outlined">mail</span>
+          <input
+            type="email"
+            id="email"
+            formControlName="email"
+            placeholder="you&#64;example.com"
+            [class.input-error]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+          >
+        </div>
+        <div class="field-error" *ngIf="registerForm.get('email')?.hasError('required') && registerForm.get('email')?.touched">
+          Email is required.
+        </div>
+        <div class="field-error" *ngIf="registerForm.get('email')?.hasError('email') && registerForm.get('email')?.touched">
+          Please enter a valid email address.
+        </div>
+      </div>
+
+      
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-wrapper">
+          <span class="input-icon material-symbols-outlined">lock</span>
+          <input
+            type="password"
+            id="password"
+            formControlName="password"
+            placeholder="Min. 6 characters"
+            [class.input-error]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+          >
+        </div>
+        <div class="field-error" *ngIf="registerForm.get('password')?.hasError('required') && registerForm.get('password')?.touched">
+          Password is required.
+        </div>
+        <div class="field-error" *ngIf="registerForm.get('password')?.hasError('minlength') && registerForm.get('password')?.touched">
+          Password must be at least 6 characters.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="passwordConfirm">Confirm Password</label>
+        <div class="input-wrapper">
+          <span class="input-icon material-symbols-outlined">lock</span>
+          <input
+            type="password"
+            id="passwordConfirm"
+            formControlName="passwordConfirm"
+            placeholder="Re-enter your password"
+            [class.input-error]="(registerForm.errors?.['mismatch'] || registerForm.get('passwordConfirm')?.invalid) && registerForm.get('passwordConfirm')?.touched"
+          >
+        </div>
+        <div class="field-error" *ngIf="registerForm.get('passwordConfirm')?.hasError('required') && registerForm.get('passwordConfirm')?.touched">
+          Please confirm your password.
+        </div>
+        <div class="field-error" *ngIf="registerForm.errors?.['mismatch'] && registerForm.get('passwordConfirm')?.touched && !registerForm.get('passwordConfirm')?.hasError('required')">
+          Passwords do not match.
+        </div>
+      </div>
+
+      
+      @if (errorMessage()) {
+        <div class="error-banner">
+          <span class="material-symbols-outlined">error</span>
+          {{ errorMessage() }}
+        </div>
+      }
+
+      
+      <button type="submit" class="btn btn-primary btn-full submit-btn" [disabled]="registerForm.invalid || loading()">
+        @if (loading()) {
+          <span class="spinner"></span>
+          Joining...
+        } @else {
+          Agree & Join
+        }
+      </button>
+    </form>
+
+    
+    <div class="divider">
+      <span>or</span>
+    </div>
+
+    
+    <button class="btn btn-outline btn-full btn-google" (click)="loginWithGoogle()">
+      <img src="https://lh3.googleusercontent.com/COxitqgJr1sICpeqSUPVLunPWHnC9S8GuGvF0SOfW9Y05SgxDko4Wz-9_p0uY2-uX_W3oZ-TwpfA0X0zG1tXGq-5=" alt="Google" width="18">
+      Join with Google
+    </button>
+
+    
+    <p class="auth-footer">
+      Already on JobStream? <a routerLink="/login">Sign in</a>
+    </p>
+  </div>
+</div>

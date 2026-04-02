@@ -1,0 +1,152 @@
+<div class="layout-wrapper">
+  
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <div class="navbar-container flex-row items-center justify-between">
+      <div class="flex-row items-center gap-lg flex-1">
+        
+        <button class="burger-btn" (click)="toggleSidebar()" aria-label="Toggle navigation menu">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+
+        <a class="logo" routerLink="/" aria-label="JobStream home">
+          <span class="logo-text">Job<span>Stream</span></span>
+        </a>
+        <div class="navbar-search" role="search">
+          <span class="material-symbols-outlined" aria-hidden="true">search</span>
+          <input type="text" placeholder="Search" aria-label="Search JobStream">
+        </div>
+      </div>
+
+      <div class="nav-actions flex-row items-center gap-md">
+        <div class="nav-icons flex-row gap-sm hide-mobile">
+           <button class="btn-icon" title="Home" routerLink="/job-feed" aria-label="Job feed">
+             <span class="material-symbols-outlined" aria-hidden="true">home</span>
+           </button>
+           <button class="btn-icon" title="Network" routerLink="/network" aria-label="Network">
+             <span class="material-symbols-outlined" aria-hidden="true">group</span>
+           </button>
+           <button class="btn-icon" title="Messages" routerLink="/messages" aria-label="Messages">
+             <span class="material-symbols-outlined" aria-hidden="true">chat</span>
+           </button>
+           <button class="btn-icon" title="My Applications" routerLink="/my-applications" aria-label="My applications">
+             <span class="material-symbols-outlined" aria-hidden="true">assignment</span>
+           </button>
+        </div>
+
+        <button class="btn-icon" (click)="authService.logout()" title="Logout" aria-label="Log out">
+          <span class="material-symbols-outlined" aria-hidden="true">logout</span>
+        </button>
+
+        <a class="user-avatar" *ngIf="authService.currentUser() as user" routerLink="/profile" aria-label="My profile">
+          <img
+            [src]="user.photoUrl || user.profile?.photoUrl || 'https://ui-avatars.com/api/?name=' + (user.firstName || user.email || 'U') + '&background=6366f1&color=fff&size=40'"
+            [alt]="(user.firstName || 'User') + ' profile picture'"
+            width="32" height="32">
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  
+  @if (sidebarOpen()) {
+    <div class="sidebar-overlay" (click)="closeSidebar()" aria-hidden="true"></div>
+  }
+
+  <div class="container main-content-grid">
+    
+    <aside class="sidebar" [class.open]="sidebarOpen()" role="complementary" aria-label="Sidebar navigation">
+      
+      @if (myCompany()) {
+        <div class="sidebar-company-card card">
+          <div class="company-mini">
+            @if (myCompany()!.logoUrl) {
+              <img [src]="myCompany()!.logoUrl" [alt]="myCompany()!.name + ' logo'" class="company-mini-logo" width="36" height="36">
+            } @else {
+              <div class="company-mini-icon" role="img" [attr.aria-label]="myCompany()!.name + ' icon'">
+                <span class="material-symbols-outlined" aria-hidden="true">business</span>
+              </div>
+            }
+            <div class="company-mini-info">
+              <h4>{{ myCompany()!.name }}</h4>
+              @if (myCompany()!.domain) {
+                <small>{{ myCompany()!.domain }}</small>
+              }
+            </div>
+          </div>
+          <div class="company-mini-actions">
+            <a [routerLink]="['/company', myCompany()!.id]" class="btn-mini" (click)="closeSidebar()">View</a>
+            <a [routerLink]="['/recruitment', myCompany()!.id]" class="btn-mini primary" (click)="closeSidebar()">Recruitment</a>
+          </div>
+        </div>
+      }
+
+      <nav class="sidebar-card card" aria-label="Main menu">
+        <ul class="nav-list">
+          <li>
+            <a routerLink="/job-feed" routerLinkActive="active" class="nav-item" (click)="closeSidebar()">
+              <span class="material-symbols-outlined" aria-hidden="true">work</span>
+              <span>Job Feed</span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/network" routerLinkActive="active" class="nav-item" (click)="closeSidebar()">
+              <span class="material-symbols-outlined" aria-hidden="true">group</span>
+              <span>Network</span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/messages" routerLinkActive="active" class="nav-item" (click)="closeSidebar()">
+              <span class="material-symbols-outlined" aria-hidden="true">chat</span>
+              <span>Messages</span>
+              @if (unreadMsgCount() > 0) {
+                <span class="badge" [attr.aria-label]="unreadMsgCount() + ' unread messages'">{{ unreadMsgCount() }}</span>
+              }
+            </a>
+          </li>
+          <li>
+            <a routerLink="/my-applications" routerLinkActive="active" class="nav-item" (click)="closeSidebar()">
+              <span class="material-symbols-outlined" aria-hidden="true">assignment</span>
+              <span>My Applications</span>
+            </a>
+          </li>
+          <li>
+            <a routerLink="/notifications" routerLinkActive="active" class="nav-item" (click)="closeSidebar()">
+              <span class="material-symbols-outlined" aria-hidden="true">notifications</span>
+              <span>Notifications</span>
+              @if (unreadNotifCount() > 0) {
+                <span class="badge" [attr.aria-label]="unreadNotifCount() + ' unread notifications'">{{ unreadNotifCount() }}</span>
+              }
+            </a>
+          </li>
+          <li>
+            <a routerLink="/profile" routerLinkActive="active" class="nav-item" (click)="closeSidebar()">
+              <span class="material-symbols-outlined" aria-hidden="true">person</span>
+              <span>Profile</span>
+            </a>
+          </li>
+          @if (!myCompany()) {
+            <li>
+              <a routerLink="/company-create" routerLinkActive="active" class="nav-item" (click)="closeSidebar()">
+                <span class="material-symbols-outlined" aria-hidden="true">add_business</span>
+                <span>Create Company</span>
+              </a>
+            </li>
+          }
+          @if (isAdmin()) {
+            <li>
+              <a routerLink="/admin" routerLinkActive="active" class="nav-item" (click)="closeSidebar()">
+                <span class="material-symbols-outlined" aria-hidden="true">admin_panel_settings</span>
+                <span>Admin</span>
+              </a>
+            </li>
+          }
+        </ul>
+      </nav>
+    </aside>
+
+    
+    <main class="page-content" role="main">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

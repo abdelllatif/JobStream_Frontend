@@ -2,12 +2,10 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { API_URL } from '../constants/api.constants';
 
 export const apiInterceptor: HttpInterceptorFn = (req, next) => {
-  // If the request is already an absolute URL or a local asset, don't prefix it
   if (req.url.startsWith('http') || req.url.startsWith('assets/')) {
     return next(req);
   }
 
-  // Prepend API_URL to relative paths starting with /api
   const apiReq = req.clone({
     url: `${API_URL}${req.url.startsWith('/') ? '' : '/'}${req.url}`
   });

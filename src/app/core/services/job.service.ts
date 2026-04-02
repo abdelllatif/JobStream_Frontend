@@ -25,18 +25,27 @@ export class JobService {
     params = params.set('page', (filters.page || 0).toString());
     params = params.set('size', (filters.size || 20).toString());
 
-    return this.http.get<any>('/api/jobs', { params });
+    return this.http.get<any>('/api/jobs/search', { params });
   }
 
   getJobById(id: string): Observable<Job> {
     return this.http.get<Job>(`/api/jobs/${id}`);
   }
 
+  getJobsExceptPoster(filters?: JobFilter): Observable<any> {
+    let params = new HttpParams();
+    if (filters?.keyword) params = params.set('keyword', filters.keyword);
+    if (filters?.location) params = params.set('location', filters.location);
+    if (filters?.jobType) params = params.set('jobType', filters.jobType);
+    params = params.set('page', (filters?.page || 0).toString());
+    params = params.set('size', (filters?.size || 20).toString());
+    return this.http.get<any>('/api/jobs/except-poster', { params });
+  }
+
   getJobsByCompany(companyId: string): Observable<Job[]> {
     return this.http.get<Job[]>(`/api/jobs/company/${companyId}`);
   }
 
-  // Admin/Company endpoints
   createJob(jobData: Partial<Job>): Observable<Job> {
     return this.http.post<Job>('/api/jobs', jobData);
   }
